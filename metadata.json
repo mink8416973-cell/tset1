@@ -1,0 +1,7 @@
+{
+  "name": "Lumen Market Interface",
+  "description": "A holographic, voice-enabled market interpreter using Gemini Live API and WebGL shaders.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
