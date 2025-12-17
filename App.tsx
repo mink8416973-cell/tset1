@@ -18,6 +18,36 @@ const MOCK_STOCKS = [
   { name: 'POSCO홀딩스', ticker: '005490.KS', price: 415000, change: -1.2, sector: 'Steel' },
 ];
 
+// Define assets for each scenario
+// 4가지 관점에 따라 로컬 이미지 경로와 분위기(필터)를 다르게 설정
+// 주의: public/images 폴더에 해당 파일명(macro.png, sector.png 등)의 이미지가 있어야 합니다.
+const SCENARIO_ASSETS: Record<ScenarioKey, { url: string, filter: string, shadowColor: string }> = {
+  macro: {
+    // 거시 경제: 차분하고 객관적인 표정/자세
+    url: "public/images/macro.png", 
+    filter: "contrast(1.1) brightness(1.1) saturate(1.1)", 
+    shadowColor: "rgba(0,255,255,0.5)"
+  },
+  sector: {
+    // 섹터: 열정적이고 역동적인 표정/자세
+    url: "public/images/sector.png", 
+    filter: "contrast(1.2) brightness(1.1) hue-rotate(45deg) saturate(1.3)", 
+    shadowColor: "rgba(200, 100, 255, 0.5)"
+  },
+  watch: {
+    // 관심 종목: 집중하고 분석적인 표정/자세
+    url: "public/images/watch.png", 
+    filter: "contrast(1.2) brightness(1.2) sepia(0.3) hue-rotate(-50deg) saturate(1.2)", 
+    shadowColor: "rgba(255, 255, 100, 0.4)"
+  },
+  crisis: {
+    // 위기: 심각하고 경고하는 표정/자세
+    url: "public/images/crisis.png", 
+    filter: "contrast(1.5) brightness(0.9) grayscale(1) sepia(1) hue-rotate(-50deg) saturate(4)", 
+    shadowColor: "rgba(255, 50, 50, 0.6)"
+  }
+};
+
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<'intro' | 'app'>('intro');
   const [selectedScenario, setSelectedScenario] = useState<ScenarioKey>('macro');
@@ -536,17 +566,27 @@ const App: React.FC = () => {
 
           {/* Left: Humanoid Viz */}
           <div className="flex-[2] relative grid place-items-center overflow-hidden p-4">
-             {/* Holographic Ring */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(320px,34vw)] aspect-[320/520] border-[2px] border-cyan-400/30 rounded-[160px_160px_120px_120px] shadow-[0_0_60px_rgba(0,255,255,0.4)] z-10 animate-pulse pointer-events-none" />
+             {/* Holographic Ring -> Dynamic color based on scenario */}
+             <div 
+               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(320px,34vw)] aspect-[320/520] border-[2px] rounded-[160px_160px_120px_120px] shadow-[0_0_60px_rgba(0,255,255,0.4)] z-10 animate-pulse pointer-events-none transition-colors duration-500" 
+               style={{ 
+                  borderColor: SCENARIO_ASSETS[selectedScenario].shadowColor.replace('0.4', '0.3').replace('0.5', '0.3').replace('0.6', '0.3'),
+                  boxShadow: `0 0 60px ${SCENARIO_ASSETS[selectedScenario].shadowColor}`
+               }}
+             />
              
-             {/* Humanoid Image -> Changed to Google Drive Direct Link */}
-             <div className="relative z-20 w-[min(72vh,90%)] h-[80vh] flex items-center justify-center pointer-events-none">
+             {/* Humanoid Image -> Dynamic source and filter */}
+             <div className="relative z-0 w-[min(72vh,90%)] h-[80vh] flex items-center justify-center pointer-events-none transition-all duration-700">
                 <img 
-                  src="https://drive.google.com/uc?export=view&id=1PL6dHgK2oCLIhibcsaKiiTWFOPCCu-ca" 
+                  src={SCENARIO_ASSETS[selectedScenario].url}
                   alt="Humanoid Interface"
-                  className="w-full h-full object-contain mix-blend-screen opacity-95 drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="w-full h-full object-contain mix-blend-screen opacity-95 transition-all duration-700"
                   style={{ 
-                    filter: 'contrast(1.1) brightness(1.1) saturate(1.1)' 
+                    filter: `${SCENARIO_ASSETS[selectedScenario].filter} drop-shadow(0 0 30px ${SCENARIO_ASSETS[selectedScenario].shadowColor})`
+                  }}
+                  onError={(e) => {
+                    // Fallback if image not found to avoid broken icon, maybe show text or transparent
+                    (e.target as HTMLImageElement).style.opacity = '0.3';
                   }}
                 />
                 {/* Subtle scanline overlay for the hologram effect */}
@@ -555,7 +595,7 @@ const App: React.FC = () => {
 
              {/* Floor Grid */}
              <div 
-               className="absolute top-[65%] left-1/2 -translate-x-1/2 w-[min(680px,86vw)] h-[40vh] bg-[linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(180deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:34px_34px] mask-radial opacity-50 pointer-events-none"
+               className="absolute top-[65%] left-1/2 -translate-x-1/2 w-[min(680px,86vw)] h-[40vh] bg-[linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(180deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:34px_34px] mask-radial opacity-50 z-10 pointer-events-none"
                style={{ transform: 'perspective(900px) rotateX(70deg)', maskImage: 'radial-gradient(circle, black, transparent 70%)' }}
              />
           </div>
