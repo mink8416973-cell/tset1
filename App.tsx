@@ -20,29 +20,24 @@ const MOCK_STOCKS = [
 
 // Define assets for each scenario
 // 4가지 관점에 따라 로컬 이미지 경로와 분위기(필터)를 다르게 설정
-// 주의: public/images 폴더에 해당 파일명(macro.png, sector.png 등)의 이미지가 있어야 합니다.
 const SCENARIO_ASSETS: Record<ScenarioKey, { url: string, filter: string, shadowColor: string }> = {
   macro: {
-    // 거시 경제: 차분하고 객관적인 표정/자세
-    url: "public/images/macro.png", 
-    filter: "contrast(1.1) brightness(1.1) saturate(1.1)", 
+    url: "/images/macro.gif", 
+    filter: "contrast(1.2) brightness(1.2) saturate(0.8)", 
     shadowColor: "rgba(0,255,255,0.5)"
   },
   sector: {
-    // 섹터: 열정적이고 역동적인 표정/자세
-    url: "public/images/sector.png", 
-    filter: "contrast(1.2) brightness(1.1) hue-rotate(45deg) saturate(1.3)", 
+    url: "/images/sector.gif", 
+    filter: "contrast(1.3) brightness(1.1) hue-rotate(45deg) saturate(1.3)", 
     shadowColor: "rgba(200, 100, 255, 0.5)"
   },
   watch: {
-    // 관심 종목: 집중하고 분석적인 표정/자세
-    url: "public/images/watch.png", 
+    url: "/images/watch.gif", 
     filter: "contrast(1.2) brightness(1.2) sepia(0.3) hue-rotate(-50deg) saturate(1.2)", 
     shadowColor: "rgba(255, 255, 100, 0.4)"
   },
   crisis: {
-    // 위기: 심각하고 경고하는 표정/자세
-    url: "public/images/crisis.png", 
+    url: "/images/crisis.gif", 
     filter: "contrast(1.5) brightness(0.9) grayscale(1) sepia(1) hue-rotate(-50deg) saturate(4)", 
     shadowColor: "rgba(255, 50, 50, 0.6)"
   }
@@ -472,77 +467,98 @@ const App: React.FC = () => {
 
       {/* --- INTRO VIEW --- */}
       {currentView === 'intro' && (
-        <section className="fixed inset-0 grid place-items-center z-10 overflow-hidden animate-in fade-in duration-500">
-          <div className="relative w-[min(1100px,92vw)] grid grid-cols-1 lg:grid-cols-2 gap-8 items-center z-20">
-            
-            {/* Left Col */}
-            <div className="p-4">
-              <div className="text-xs tracking-[2px] opacity-75 text-cyan-300 mb-2">LUMEN / MARKET INTERFACE</div>
-              <h1 className="text-4xl md:text-5xl font-light text-cyan-50 mb-4 drop-shadow-[0_0_25px_rgba(0,255,255,0.2)] break-keep">
-                숫자를 보기 전에, <br/><span className="font-semibold text-cyan-400">관점</span>을 선택하세요.
-              </h1>
-              <p className="text-sm opacity-80 max-w-md mb-6 leading-relaxed break-keep">
-                루멘은 단순한 차트가 아닙니다. 선택한 시나리오에 따라 시장을 해석하고, 홀로그램 인터페이스와 AI 음성을 통해 통찰력을 제공합니다.
-              </p>
+        <>
+          <section className="fixed inset-0 z-10 overflow-y-auto flex flex-col animate-in fade-in duration-500">
+            <div className="relative w-[min(1100px,92vw)] m-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center z-20 p-6 py-12 lg:p-0">
               
-              {/* Feature Buttons (Replacement for Tags) */}
-              <div className="flex flex-wrap gap-3 mb-8">
+              {/* Left Col */}
+              <div className="p-4 flex flex-col justify-center">
+                {/* Branding / Logo Area */}
+                <div className="mb-10 animate-in slide-in-from-left-8 fade-in duration-1000 fill-mode-backwards">
+                   <div className="flex items-center gap-3 mb-2 opacity-70">
+                      <div className="flex gap-1">
+                        <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse" />
+                        <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse delay-75" />
+                        <div className="w-1 h-1 rounded-full bg-cyan-400 animate-pulse delay-150" />
+                      </div>
+                      <span className="text-[10px] tracking-[3px] text-cyan-300 font-mono">SYSTEM ONLINE</span>
+                   </div>
+                   
+                   <h1 className="text-7xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-100 to-cyan-600 drop-shadow-[0_0_35px_rgba(0,255,255,0.3)] select-none leading-[0.9]">
+                     LUMEN
+                   </h1>
+                   
+                   <div className="flex items-center mt-2 max-w-[280px]">
+                      <div className="h-px bg-gradient-to-r from-cyan-500/50 to-transparent flex-1" />
+                      <span className="mx-3 text-xs md:text-sm font-light text-cyan-400/80 tracking-[0.4em] uppercase whitespace-nowrap">
+                        Market Interface
+                      </span>
+                      <div className="h-px bg-gradient-to-l from-cyan-500/50 to-transparent flex-1" />
+                   </div>
+                </div>
+
+                <p className="text-sm text-cyan-100/60 max-w-md mb-8 leading-relaxed break-keep border-l border-cyan-500/20 pl-4 animate-in fade-in duration-1000 delay-300 fill-mode-backwards">
+                  숫자를 넘어선 통찰. <br/>
+                  <span className="text-cyan-200/90">AI 홀로그램 인터페이스</span>가 당신의 관점에 맞춰 시장을 재해석합니다.
+                </p>
+                
+                {/* Feature Buttons (Replacement for Tags) */}
+                <div className="flex flex-wrap gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500 fill-mode-backwards">
+                  <button 
+                    onClick={() => setActiveOverlay('search')}
+                    className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
+                  >
+                    <Search size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
+                    종목 검색
+                  </button>
+                  <button 
+                    onClick={() => { setActiveOverlay('chart'); setChartPreviewStock(MOCK_STOCKS[0]); setChartSearchTerm(''); }}
+                    className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
+                  >
+                    <LineChart size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
+                    실시간 차트
+                  </button>
+                  <button 
+                    onClick={() => setActiveOverlay('news')}
+                    className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
+                  >
+                    <Newspaper size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
+                    주요 뉴스
+                  </button>
+                  <button 
+                    onClick={() => setActiveOverlay('youtube')}
+                    className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
+                  >
+                    <Youtube size={14} className="text-red-400 group-hover:scale-110 transition-transform"/> 
+                    주식 공부
+                  </button>
+                </div>
+
                 <button 
-                  onClick={() => setActiveOverlay('search')}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
+                  onClick={() => setCurrentView('app')}
+                  className="group relative px-6 py-3 bg-cyan-950/40 border border-cyan-500/30 rounded-xl overflow-hidden hover:bg-cyan-900/50 transition-all active:scale-95 animate-in fade-in duration-1000 delay-700 fill-mode-backwards w-fit"
                 >
-                  <Search size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
-                  종목 검색
-                </button>
-                <button 
-                  onClick={() => { setActiveOverlay('chart'); setChartPreviewStock(MOCK_STOCKS[0]); setChartSearchTerm(''); }}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
-                >
-                  <LineChart size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
-                  실시간 차트
-                </button>
-                <button 
-                  onClick={() => setActiveOverlay('news')}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
-                >
-                  <Newspaper size={14} className="text-cyan-400 group-hover:scale-110 transition-transform"/> 
-                  주요 뉴스
-                </button>
-                <button 
-                  onClick={() => setActiveOverlay('youtube')}
-                  className="flex items-center gap-2 px-4 py-2 border border-cyan-500/30 bg-black/40 hover:bg-cyan-900/40 rounded-full text-xs transition-all hover:border-cyan-400/60 group"
-                >
-                  <Youtube size={14} className="text-red-400 group-hover:scale-110 transition-transform"/> 
-                  주식 공부
+                  <div className="absolute inset-0 bg-cyan-400/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  <span className="relative z-10 flex items-center gap-2 text-sm font-medium tracking-wide">
+                    인터페이스 진입 <Globe size={14} />
+                  </span>
                 </button>
               </div>
 
-              <button 
-                onClick={() => setCurrentView('app')}
-                className="group relative px-6 py-3 bg-cyan-950/40 border border-cyan-500/30 rounded-xl overflow-hidden hover:bg-cyan-900/50 transition-all active:scale-95"
-              >
-                <div className="absolute inset-0 bg-cyan-400/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                <span className="relative z-10 flex items-center gap-2 text-sm font-medium tracking-wide">
-                  인터페이스 진입 <Globe size={14} />
-                </span>
-              </button>
-            </div>
-
-            {/* Right Col: 3D Deck */}
-            <div className="h-[420px] relative perspective-[1200px]" onMouseMove={handleMouseMove} onMouseLeave={() => setMousePos({x:0,y:0})}>
-              <div ref={deckRef} className="absolute inset-0 grid grid-cols-2 gap-4 content-center preserve-3d" style={deckStyle}>
-                {renderCard('macro')}
-                {renderCard('sector')}
-                {renderCard('watch')}
-                {renderCard('crisis')}
+              {/* Right Col: 3D Deck */}
+              <div className="h-[420px] relative perspective-[1200px]" onMouseMove={handleMouseMove} onMouseLeave={() => setMousePos({x:0,y:0})}>
+                <div ref={deckRef} className="absolute inset-0 grid grid-cols-2 gap-4 content-center preserve-3d" style={deckStyle}>
+                  {renderCard('macro')}
+                  {renderCard('sector')}
+                  {renderCard('watch')}
+                  {renderCard('crisis')}
+                </div>
               </div>
             </div>
-
-          </div>
-
-          {/* Render Overlay if Active */}
+          </section>
+          {/* Render Overlay if Active - outside scroll container for proper fixed positioning */}
           {renderOverlayContent()}
-        </section>
+        </>
       )}
 
       {/* --- DASHBOARD APP VIEW --- */}
@@ -568,29 +584,70 @@ const App: React.FC = () => {
           <div className="flex-[2] relative grid place-items-center overflow-hidden p-4">
              {/* Holographic Ring -> Dynamic color based on scenario */}
              <div 
-               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(320px,34vw)] aspect-[320/520] border-[2px] rounded-[160px_160px_120px_120px] shadow-[0_0_60px_rgba(0,255,255,0.4)] z-10 animate-pulse pointer-events-none transition-colors duration-500" 
+               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(360px,36vw)] aspect-[320/520] border-[2px] rounded-[180px_180px_150px_150px] shadow-[0_0_50px_rgba(0,255,255,0.4)] z-10 animate-pulse pointer-events-none transition-colors duration-500" 
                style={{ 
                   borderColor: SCENARIO_ASSETS[selectedScenario].shadowColor.replace('0.4', '0.3').replace('0.5', '0.3').replace('0.6', '0.3'),
-                  boxShadow: `0 0 60px ${SCENARIO_ASSETS[selectedScenario].shadowColor}`
+                  boxShadow: `0 0 50px ${SCENARIO_ASSETS[selectedScenario].shadowColor}`
                }}
              />
              
              {/* Humanoid Image -> Dynamic source and filter */}
-             <div className="relative z-0 w-[min(72vh,90%)] h-[80vh] flex items-center justify-center pointer-events-none transition-all duration-700">
-                <img 
-                  src={SCENARIO_ASSETS[selectedScenario].url}
-                  alt="Humanoid Interface"
-                  className="w-full h-full object-contain mix-blend-screen opacity-95 transition-all duration-700"
-                  style={{ 
-                    filter: `${SCENARIO_ASSETS[selectedScenario].filter} drop-shadow(0 0 30px ${SCENARIO_ASSETS[selectedScenario].shadowColor})`
-                  }}
-                  onError={(e) => {
-                    // Fallback if image not found to avoid broken icon, maybe show text or transparent
-                    (e.target as HTMLImageElement).style.opacity = '0.3';
-                  }}
-                />
-                {/* Subtle scanline overlay for the hologram effect */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0)_50%,rgba(0,255,255,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[size:100%_4px,3px_100%] pointer-events-none mix-blend-screen opacity-50" />
+             <div className="relative z-0 h-[80vh] w-full flex items-center justify-center pointer-events-none">
+                 <div className="relative w-[min(520px,90vw)] aspect-[3/4] flex items-center justify-center">
+                    
+                    {/* 접지(바닥/뒤 톤) 레이어: 붕 뜨는 느낌 잡아줌 */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "radial-gradient(60% 40% at 50% 65%, rgba(0,255,255,0.18), transparent 70%)," +
+                          "radial-gradient(60% 40% at 50% 95%, rgba(0,0,0,0.85), transparent 65%)",
+                        filter: "blur(10px)",
+                        opacity: 0.9,
+                      }}
+                    />
+
+                    {/* 이미지 */}
+                    <img
+                      src={SCENARIO_ASSETS[selectedScenario].url}
+                      alt="Humanoid Interface"
+                      className="absolute inset-0 w-full h-full object-contain transition-all duration-700"
+                      style={{
+                        // 가장자리 페더(투명도)
+                        WebkitMaskImage:
+                          "radial-gradient(closest-side, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)",
+                        maskImage:
+                          "radial-gradient(closest-side, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)",
+                        WebkitMaskRepeat: "no-repeat",
+                        maskRepeat: "no-repeat",
+                        WebkitMaskSize: "100% 100%",
+                        maskSize: "100% 100%",
+
+                        // 배경과 섞이게(너가 이미 쓰던 screen 계열)
+                        mixBlendMode: "screen",
+                        opacity: 0.95,
+
+                        // 과한 “붕” 느낌 줄이기: 그림자는 바깥이 아니라 아주 약하게
+                        filter: `${SCENARIO_ASSETS[selectedScenario].filter} contrast(1.02) saturate(1.05)`,
+                      }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.opacity = '0.3';
+                      }}
+                    />
+
+                    {/* 테두리 글로우(선택): 배경과 이어주는 링 */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        boxShadow: "0 0 60px rgba(0,255,255,0.12)",
+                        borderRadius: "24px",
+                        mixBlendMode: "screen",
+                      }}
+                    />
+                    
+                    {/* Subtle scanline overlay for the hologram effect */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0)_50%,rgba(0,255,255,0.05)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[size:100%_4px,3px_100%] pointer-events-none mix-blend-screen opacity-50" />
+                 </div>
              </div>
 
              {/* Floor Grid */}
